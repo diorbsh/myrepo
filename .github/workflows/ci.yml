@@ -40,10 +40,17 @@ jobs:
     - name: Verify JAR generation
       run: ls -la build/libs/
 # 3. DOCKER: Build the image only after the JAR is confirmed to exist
-    - name: Build Docker Image
-      run: docker build -f Dockerfile -t my-app .
+
     - name: Build with Gradle Wrapper
       run: ./gradlew build
+    - name: Debug - Find the real JAR and check visibility
+      run: |
+        echo "=== EXACT JAR FILENAME ==="
+        find . -name "*.jar"
+        echo "=== CHECKING DOCKERIGNORE ==="
+        cat .dockerignore || echo "No .dockerignore file exists"
+    - name: Build Docker Image
+      run: docker build -f Dockerfile -t my-app .
 
     - uses: actions/checkout@v3
       name: Check out code
