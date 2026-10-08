@@ -2,7 +2,7 @@ FROM eclipse-temurin:11-jre-alpine
 
 EXPOSE 8080
 
-COPY ./build/libs/*.jar /usr/app/app.jar
+COPY ./build/libs/test-app-1.0-SNAPSHOT.jar /usr/app/
 WORKDIR /usr/app
 
-ENTRYPOINT ["java", "-jar", "/usr/app/app.jar"]
+ENTRYPOINT ["java", "-jar", "test-app-1.0-SNAPSHOT.jar"]
