@@ -33,6 +33,15 @@ jobs:
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
 
+# 1. CRITICAL: Compile the Java code and generate the JAR file
+    - name: Build application with Gradle
+      run: ./gradlew build
+# 2. DEBUG: Print the contents of the libs folder to verify the exact filename
+    - name: Verify JAR generation
+      run: ls -la build/libs/
+# 3. DOCKER: Build the image only after the JAR is confirmed to exist
+    - name: Build Docker Image
+      run: docker build -f Dockerfile -t my-app .
     - name: Build with Gradle Wrapper
       run: ./gradlew build
 
