@@ -1,38 +1,39 @@
-# This workflow will build a Java project with Gradle
-# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
-
-name: Java CI with Gradle
+name: CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
-  build-java:
-
+  build:
     runs-on: ubuntu-latest
-    
+
     steps:
-    - uses: actions/checkout@v2
+      # 1. Code aus dem Repo holen
+      - name: Check out code
+        uses: actions/checkout@v4
 
-    - name: Set up JDK 1.8
-      uses: actions/setup-java@v1
-      with:
-        java-version: 1.8
+      # 2. Java installieren (passt zum Docker-Image: Java 11)
+      - name: Set up JDK 11
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 11
 
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
+      # 3. Gradle-Wrapper ausführbar machen
+      - name: Make gradlew executable
+        run: chmod +x gradlew
 
-    - name: Build with Gradle
-      run: ./gradlew build
+      # 4. JAR bauen
+      - name: Build with Gradle
+        run: ./gradlew build
 
-    - name: Build and Push Docker Image
-      uses: mr-smithers-excellent/docker-build-push@v4
-      with:
-        image: diorbsh/demo-app
-        registry: docker.io
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-         
+      # 5. Kontrolle: Wo liegt das JAR wirklich?
+      - name: Show built files
+        run: ls -l build/libs
+
+      # 6. Docker-Image bauen
+      - name: Build Docker Image
+        run: docker build -t my-app .
